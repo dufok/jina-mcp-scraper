@@ -1,9 +1,12 @@
 {
   "name": "jina-mcp-tools",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Jina AI Model Context Protocol (MCP) server that integrates with Jina AI APIs for web reading, search, and fact-checking",
   "main": "index.js",
   "type": "module",
+  "bin": {
+    "jina-mcp-tools": "./index.js"
+  },
   "scripts": {
     "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"

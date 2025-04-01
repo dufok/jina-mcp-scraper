@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
@@ -23,7 +25,7 @@ const createHeaders = (baseHeaders = {}) => {
 // Create MCP server for Jina AI tools
 const server = new McpServer({
   name: "jina-mcp-tools",
-  version: "1.0.0",
+  version: "1.0.1",
   description: "Jina AI tools for web reading, search, and fact-checking"
 });
 
@@ -201,7 +203,7 @@ async function main() {
         console.warn("Warning: JINA_API_KEY seems too short. Please verify your API key.");
       }
     } else {
-      console.log("No Jina AI API key found. Running in keyless mode with possible rate limitations.");
+      console.log("No Jina AI API key found. Some features may be limited.");
     }
 
     // Connect the server to stdio transport
@@ -212,7 +214,7 @@ async function main() {
     console.log("Jina MCP Tools server started successfully.");
     console.log("Server is running as Model Context Protocol tool provider.");
   } catch (error) {
-    console.error(`Error starting Jina MCP Tools server: ${error.message}`);
+    console.error("Server error:", error);
     process.exit(1);
   }
 }
