@@ -1,0 +1,40 @@
+{
+  "name": "jina-mcp-tools",
+  "version": "1.0.0",
+  "description": "Jina AI Model Context Protocol (MCP) server that integrates with Jina AI APIs for web reading, search, and fact-checking",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.8.0",
+    "node-fetch": "^3.3.2",
+    "zod": "^3.22.4"
+  },
+  "keywords": [
+    "jina",
+    "ai",
+    "mcp",
+    "model-context-protocol",
+    "search",
+    "fact-check",
+    "web-reader",
+    "cursor",
+    "cursor-editor"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PsychArch/jina-mcp-tools.git"
+  },
+  "homepage": "https://github.com/PsychArch/jina-mcp-tools#readme",
+  "bugs": {
+    "url": "https://github.com/PsychArch/jina-mcp-tools/issues"
+  },
+  "author": "PsychArch (https://github.com/PsychArch)",
+  "license": "MIT",
+  "engines": {
+    "node": ">=16.0.0"
+  }
+} 
