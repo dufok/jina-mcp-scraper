@@ -25,7 +25,7 @@ const createHeaders = (baseHeaders = {}) => {
 // Create MCP server for Jina AI tools
 const server = new McpServer({
   name: "jina-mcp-tools",
-  version: "1.0.2",
+  version: "1.0.3",
   description: "Jina AI tools for web reading, search, and fact-checking"
 });
 
@@ -123,10 +123,50 @@ server.tool(
 
       const text = await response.text();
       
+      // Parse the JSON response
+      const data = JSON.parse(text);
+      
+      // Extract just the search results
+      let results = data.data || [];
+      
+      // Limit to the requested count
+      if (count && count > 0 && results.length > count) {
+        results = results.slice(0, count);
+      }
+      
+      // Clean up the results to remove unnecessary token information
+      results = results.map(result => {
+        // Remove the usage information
+        if (result.usage) {
+          delete result.usage;
+        }
+        return result;
+      });
+      
+      // Format the output based on returnFormat
+      let formattedOutput;
+      if (returnFormat === 'markdown') {
+        formattedOutput = results.map((result, index) => {
+          return `${index + 1}. **${result.title || 'Untitled'}**\n   ${result.url || ''}\n   ${result.description || ''}\n   ${result.date ? `Date: ${result.date}` : ''}\n`;
+        }).join('\n');
+      } else if (returnFormat === 'html') {
+        formattedOutput = `<ol>${results.map(result => 
+          `<li><strong>${result.title || 'Untitled'}</strong><br>
+           <a href="${result.url || ''}">${result.url || ''}</a><br>
+           ${result.description || ''}<br>
+           ${result.date ? `Date: ${result.date}` : ''}</li>`
+        ).join('')}</ol>`;
+      } else {
+        // Default to text format
+        formattedOutput = results.map((result, index) => {
+          return `${index + 1}. ${result.title || 'Untitled'}\n   ${result.url || ''}\n   ${result.description || ''}\n   ${result.date ? `Date: ${result.date}` : ''}`;
+        }).join('\n\n');
+      }
+      
       return {
         content: [{ 
           type: "text", 
-          text: text
+          text: formattedOutput
         }]
       };
     } catch (error) {
