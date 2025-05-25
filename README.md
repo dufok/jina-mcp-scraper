@@ -161,6 +161,12 @@ https://example2.com
 https://example3.com
 ```
 
+**Important Note on File Paths:**
+When using the Jina tools for scraping links, always specify file paths with the `/workspace/` prefix. For example:
+- Use: `/workspace/data/filename` 
+- Not: `workspace/data/filename` or absolute paths
+- Example: `/workspace/data/solidjs-links.md`
+
 **Output Example:**
 ```markdown
 # Content from https://example1.com
