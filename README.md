@@ -1,21 +1,40 @@
-# Jina AI MCP Tools
+# Jina AI MCP Tools - Complete Documentation
 
 > **Attribution**: This project is based on [jina-mcp-tools](https://github.com/PsychArch/jina-mcp-tools) by PsychArch. Thank you for the excellent foundation!
 
-## Summary
+## 📋 Table of Contents
 
-This MCP server provides comprehensive web content analysis and research capabilities through Jina AI's powerful APIs. It offers tools for extracting content from web pages, searching the web, fact-checking statements, and batch processing multiple URLs from files.
+- [Overview](#overview)
+- [Quick Start](#quick-start)
+- [Core Features](#core-features)
+- [Web Tools](#web-tools)
+- [Document Indexing System](#document-indexing-system)
+- [Configuration](#configuration)
+- [Docker Setup](#docker-setup)
+- [Batch Processing](#batch-processing)
+- [Development](#development)
+- [Troubleshooting](#troubleshooting)
 
-## Key Features
+## 🎯 Overview
 
-- **🔍 Web Search** - Search the web using Jina's s.jina.ai service
-- **📄 Web Reader** - Extract and format content from any webpage using r.jina.ai
-- **📋 Batch Processing** - Process multiple URLs from files with the new reader list tool
-- **✅ Fact Checking** - Verify factual statements using g.jina.ai
+This MCP server provides comprehensive web content analysis and research capabilities through Jina AI's powerful APIs, enhanced with a complete document indexing and search system. It offers tools for extracting content from web pages, searching the web, fact-checking statements, batch processing multiple URLs, and intelligent document management.
+
+### Key Capabilities
+
+- **🔍 Web Search & Reading** - Search the web and extract content from any webpage
+- **📋 Batch Processing** - Process multiple URLs from files with hardcoded separators
+- **✅ Fact Checking** - Verify factual statements using Jina AI
+- **📚 Document Indexing** - Index files into vector database with semantic chunking
+- **🔎 Intelligent Search** - Full-text search through indexed documents
 - **🐳 Docker Support** - Easy deployment with Docker containers
-- **🛠️ URL Validation** - Python script to check URL accessibility before processing
+- **🛠️ URL Validation** - Python script to check URL accessibility
 
-## Quick Start
+## 🚀 Quick Start
+
+### Prerequisites
+
+1. **Jina AI API Key** - Get a free API key from [https://jina.ai/?sui=apikey](https://jina.ai/?sui=apikey)
+2. **Node.js** - Version 16 or higher
 
 ### Option 1: Docker (Recommended)
 ```bash
@@ -42,28 +61,9 @@ npm install
 node index.js
 ```
 
-### URL Validation Tool
-Before processing URLs, validate them using the included Python script:
-```bash
-python check_urls.py data/solidjs-links.md
-```
+### Option 3: MCP Client Integration
+Configure in your MCP client (Cursor, Claude Desktop):
 
-## Tools Overview
-
-## Prerequisites
-
-1. **Jina AI API Key** - Get a free API key from [https://jina.ai/?sui=apikey](https://jina.ai/?sui=apikey)
-2. **Node.js** - Version 16 or higher
-
-## Cursor Editor Configuration
-
-You can integrate this MCP server with Cursor to enhance your coding experience.
-
-### Configuration File Setup
-
-Create a `.cursor/mcp.json` file in your project or in your home directory (`~/.cursor/mcp.json` for global access) with the following structure:
-
-#### Option 1: Using NPX (Recommended)
 ```json
 {
   "mcpServers": {
@@ -78,112 +78,12 @@ Create a `.cursor/mcp.json` file in your project or in your home directory (`~/.
 }
 ```
 
-#### Option 2: Using Local Installation
-```json
-{
-  "mcpServers": {
-    "jina-mcp-tools": {
-      "command": "node",
-      "args": ["/Users/dufok/Desktop/JinaMCPTool/index.js"],
-      "env": {
-        "JINA_API_KEY": "your_jina_api_key_here"
-      }
-    }
-  }
-}
-```
+## 🔧 Core Features
 
-#### Option 3: Using Docker (Stdio Mode)
-```json
-{
-  "mcpServers": {
-    "jina-mcp-tools": {
-      "command": "docker",
-      "args": [
-        "run", "-i", "--rm",
-        "jina-mcp-tools",
-        "npm", "run", "start:docker"
-      ],
-      "env": {
-        "JINA_API_KEY": "your_jina_api_key_here"
-      }
-    }
-  }
-}
-```
+### Web Tools
 
-### Using the Tools
-
-Once configured, Cursor's Agent will automatically use the Jina AI tools when appropriate. You can also explicitly instruct Agent to use specific tools:
-
-- "Search the web for quantum computing using Jina tools"
-- "Extract content from https://example.com using the jina_reader tool"
-- "Use jina_fact_check to verify if the Earth is flat"
-
-When a tool is called, Cursor will display the response in the chat. By default, you'll need to approve each tool usage.
-
-For unattended operation, you can enable Yolo mode in Cursor settings, which allows tools to run without approval (similar to terminal commands).
-
-## Available Tools
-
-### 🆕 jina_reader_list - NEW Batch Processing Tool
-
-**Process multiple URLs from a file and save results to output file**
-
-This powerful new tool allows you to batch process multiple URLs from a text file, making it perfect for research projects, content analysis, and documentation generation.
-
-```json
-{
-  "name": "jina_reader_list",
-  "arguments": {
-    "inputFile": "/path/to/urls.txt",
-    "outputFile": "/path/to/results.md",
-    "format": "Markdown",
-    "withLinks": false,
-    "withImages": false,
-    "delimiter": "\n---\n"
-  }
-}
-```
-
-**Features:**
-- ✅ Processes one URL per line from input file
-- ✅ Supports all Jina Reader output formats (Markdown, HTML, Text, etc.)
-- ✅ Customizable delimiter between results
-- ✅ Optional link and image extraction
-- ✅ Docker support with volume mounting
-- ✅ Error handling for invalid URLs
-
-**Input File Format:**
-```
-https://example1.com
-https://example2.com
-https://example3.com
-```
-
-**Important Note on File Paths:**
-When using the Jina tools for scraping links, always specify file paths with the `/workspace/` prefix. For example:
-- Use: `/workspace/data/filename` 
-- Not: `workspace/data/filename` or absolute paths
-- Example: `/workspace/data/solidjs-links.md`
-
-**Output Example:**
-```markdown
-# Content from https://example1.com
-Extracted content here...
-
----
-
-# Content from https://example2.com
-More extracted content...
-```
-
-For detailed usage instructions, see [BATCH_PROCESSING.md](BATCH_PROCESSING.md).
-
-### jina_reader
-
-Extract content from a webpage in a format optimized for LLMs.
-
+#### 🌐 jina_reader
+Extract content from any webpage in LLM-optimized format:
 ```json
 {
   "name": "jina_reader",
@@ -196,104 +96,414 @@ Extract content from a webpage in a format optimized for LLMs.
 }
 ```
 
-Options for `format` include: "Default", "Markdown", "HTML", "Text", "Screenshot", "Pageshot"
-
-### jina_search
-
-Search the web for information.
-
+#### 🔍 jina_search
+Search the web for information:
 ```json
 {
-  "name": "jina_search",
+  "name": "jina_search", 
   "arguments": {
     "query": "How does quantum computing work?",
-    "count": 5,
-    "returnFormat": "markdown"
+    "count": 5
   }
 }
 ```
 
-Options for `returnFormat` include: "markdown", "text", "html"
-
-### jina_fact_check
-
-Verify factual statements.
-
+#### ✅ jina_fact_check
+Verify factual statements:
 ```json
 {
   "name": "jina_fact_check",
   "arguments": {
-    "statement": "The Earth is flat",
-    "deepdive": false
+    "statement": "The Earth is flat"
   }
 }
 ```
 
-## Prompt Templates
-
-### jina_web_search
-
-A prompt template for searching the web.
-
+#### 📋 jina_reader_list (Enhanced with Hardcoded Separators)
+Process multiple URLs from a file with automatic separator handling:
 ```json
 {
-  "name": "jina_web_search",
+  "name": "jina_reader_list",
   "arguments": {
-    "query": "Recent advances in fusion energy"
+    "inputFile": "/path/to/urls.txt",
+    "outputFile": "/path/to/results.md",
+    "format": "Markdown"
   }
 }
 ```
 
-### jina_research
+**Key Enhancement**: Now uses hardcoded `###SEPARATOR###` delimiter for seamless integration with document indexing system.
 
-A prompt template for conducting research.
+### Document Indexing System
 
+#### 📚 Three Core Indexing Tools
+
+1. **index_file_to_db** - Index files into vector database
+2. **list_indexed_docs** - View indexed documents and libraries  
+3. **search_indexed_docs** - Search through indexed content
+
+#### Index a File
 ```json
 {
-  "name": "jina_research",
+  "name": "index_file_to_db",
   "arguments": {
-    "topic": "Climate change solutions",
-    "depth": "detailed"
+    "filePath": "./data/documentation.md",
+    "library": "project-docs",
+    "version": "v1.0",
+    "separator": "###SEPARATOR###"
   }
 }
 ```
 
-Options for `depth` include: "basic", "detailed", "comprehensive"
+**Auto-Detection**: The tool automatically detects if files contain the hardcoded separator from `jina_reader_list` and splits accordingly.
 
-## Additional Utilities
+#### List Indexed Documents
+```json
+{
+  "name": "list_indexed_docs",
+  "arguments": {
+    "library": "project-docs"
+  }
+}
+```
 
-### URL Validation Script
+#### Search Documents
+```json
+{
+  "name": "search_indexed_docs", 
+  "arguments": {
+    "query": "installation guide",
+    "library": "project-docs",
+    "limit": 5
+  }
+}
+```
 
-Before processing large batches of URLs, use the included Python script to validate URL accessibility:
+### Seamless Workflow
+
+1. **Scrape Multiple URLs**: Use `jina_reader_list` to scrape URLs from file
+2. **Automatic Separation**: Content is separated with `###SEPARATOR###`
+3. **Auto-Index**: Use `index_file_to_db` on scraped file - automatically detects separator
+4. **Intelligent Search**: Search through all indexed content with `search_indexed_docs`
+
+## ⚙️ Configuration
+
+### Environment Variables Configuration
+
+**Important**: Configure environment variables in your MCP client configuration file, NOT in separate `.env` files (except for Docker deployments).
+
+#### Cursor Configuration (`~/.cursor/mcp.json`)
+```json
+{
+  "mcpServers": {
+    "jina-mcp-tools": {
+      "command": "npx",
+      "args": ["jina-mcp-tools"], 
+      "env": {
+        "JINA_API_KEY": "your_actual_jina_api_key_here"
+      }
+    }
+  }
+}
+```
+
+#### Claude Desktop Configuration
+```json
+{
+  "mcpServers": {
+    "jina-mcp-tools": {
+      "command": "npx",
+      "args": ["jina-mcp-tools"],
+      "env": {
+        "JINA_API_KEY": "your_actual_jina_api_key_here"
+      }
+    }
+  }
+}
+```
+
+### Docker Configuration Options
+
+#### Option A: Docker with MCP Client Environment
+```json
+{
+  "mcpServers": {
+    "jina-mcp-tools": {
+      "command": "docker",
+      "args": [
+        "run", "-i", "--rm",
+        "jina-mcp-tools"
+      ],
+      "env": {
+        "JINA_API_KEY": "your_actual_jina_api_key_here"
+      }
+    }
+  }
+}
+```
+
+#### Option B: Docker Compose (uses .env file)
+Only when using Docker Compose for standalone deployment:
+
+1. Create `.env` file:
+```bash
+JINA_API_KEY=your_actual_jina_api_key_here
+NODE_ENV=production
+```
+
+2. Run with Docker Compose:
+```bash
+docker-compose up -d
+```
+
+## 🐳 Docker Setup
+
+### Quick Docker Start
 
 ```bash
-python check_urls.py data/NAMEFILE
+# Set up environment variables
+cp .env.example .env
+# Edit .env with your JINA_API_KEY
+
+# Build and start
+docker-compose up --build -d
+
+# Check status
+docker-compose ps
+
+# View logs
+docker-compose logs -f jina-mcp-server
 ```
 
-**Features:**
-- ✅ Checks URL accessibility and response codes
-- ✅ Identifies broken or inaccessible links
-- ✅ Reports processing time and success rates
-- ✅ Supports various file formats containing URLs
+### Testing Docker Deployment
+```bash
+# Health check
+curl http://localhost:3000/health
+# Should return: {"status":"healthy","version":"1.0.3"}
+```
 
-### Docker Setup
+### Docker Integration Modes
 
-For detailed Docker configuration and usage instructions, see [DOCKER_SETUP.md](DOCKER_SETUP.md).
+1. **HTTP Mode** (Default for Docker): Exposes SSE endpoint at `/sse`
+2. **Stdio Mode** (Traditional MCP): Direct MCP protocol communication
 
-### MCP Configuration
+### Volume Mounting for File Processing
+```bash
+# For batch processing with files
+docker run -it --rm \
+  -v /path/to/your/data:/data \
+  -e JINA_API_KEY=your_api_key \
+  jina-mcp-tools
+```
 
-For comprehensive MCP setup instructions across different editors and environments, see [MCP_CONFIG_GUIDE.md](MCP_CONFIG_GUIDE.md).
+## 📋 Batch Processing
 
-## Sample Data
+### Enhanced Separator Handling
 
-The repository includes sample data in the `data/` directory:
-- `solidjs-links.md` - Example file with SolidJS related links for testing batch processing
+The `jina_reader_list` tool now uses a hardcoded separator `###SEPARATOR###` for consistent document splitting:
 
-## License
+#### Input File Format
+```
+https://docs.example.com/guide1
+https://docs.example.com/guide2
+https://docs.example.com/guide3
+```
+
+#### Output Format (with hardcoded separator)
+```markdown
+# Content from https://docs.example.com/guide1
+[Extracted content here...]
+
+###SEPARATOR###
+
+# Content from https://docs.example.com/guide2
+[More extracted content...]
+
+###SEPARATOR###
+
+# Content from https://docs.example.com/guide3
+[Additional content...]
+```
+
+#### Seamless Indexing
+```bash
+# 1. Scrape URLs to file
+jina_reader_list --inputFile "urls.txt" --outputFile "scraped-docs.md"
+
+# 2. Index automatically detects separator and splits into individual documents
+index_file_to_db --filePath "scraped-docs.md" --library "docs"
+```
+
+### URL Validation
+Before processing large batches:
+```bash
+python check_urls.py data/urls.txt
+```
+
+## 🗂️ Architecture
+
+### Database Schema (SQLite)
+```sql
+documents (id, title, library, version, file_path, indexed_at)
+chunks (id, document_id, content, chunk_index, heading_path)  
+chunks_fts (FTS5 full-text search index)
+```
+
+### Processing Pipeline
+1. **File Reading** → Read content from file or direct input
+2. **Separator Detection** → Auto-detect `###SEPARATOR###` for splitting
+3. **Text Splitting** → Split into semantic chunks (~1000 chars)
+4. **Database Storage** → Store document metadata + chunks
+5. **FTS Indexing** → Create full-text search index
+
+### File Structure
+```
+src/
+├── database/
+│   ├── DatabaseManager.js           # SQLite operations
+│   └── schema.sql                  # Database schema
+├── indexing/
+│   └── DocumentIndexingService.js  # Main indexing service
+├── splitter/
+│   └── SimpleTextSplitter.js      # Text chunking logic
+└── embeddings/
+    └── MockEmbeddingsService.js    # Placeholder for embeddings
+```
+
+## 🔍 Use Cases
+
+### 1. Documentation Research & Indexing
+```bash
+# Scrape documentation URLs
+jina_reader_list --inputFile "doc-urls.txt" --outputFile "docs.md"
+
+# Index with auto-separator detection
+index_file_to_db --filePath "docs.md" --library "project-docs"
+
+# Search indexed docs
+search_indexed_docs --query "installation guide" --library "project-docs"
+```
+
+### 2. Multi-Version Documentation
+```bash
+index_file_to_db --filePath "./v1-docs.md" --library "docs" --version "v1.0"
+index_file_to_db --filePath "./v2-docs.md" --library "docs" --version "v2.0"
+```
+
+### 3. API Documentation Processing
+```bash
+index_file_to_db --filePath "./api-docs.md" --library "api" --separator "## "
+```
+
+## 🛠️ Development
+
+### Dependencies
+```bash
+npm install
+```
+
+Key dependencies:
+- `better-sqlite3` - SQLite database
+- `jsdom` - HTML parsing  
+- `turndown` - HTML to Markdown conversion
+- `@anthropic-ai/mcp` - MCP protocol
+
+### Testing
+```bash
+# Test the indexing system
+node test-indexing.js
+
+# Test URL validation
+python check_urls.py data/sample-urls.txt
+```
+
+## 🔧 Troubleshooting
+
+### Common Issues
+
+#### "No Jina AI API key found"
+**Solution**: Ensure API key is set in your MCP configuration:
+```json
+{
+  "env": {
+    "JINA_API_KEY": "your_key_here"
+  }
+}
+```
+
+#### Server not starting
+**Check**:
+1. API key format (no extra spaces)
+2. Command path is correct
+3. Dependencies installed
+
+#### Docker issues
+```bash
+# Check container status
+docker-compose ps
+docker-compose logs jina-mcp-server
+
+# Debug inside container
+docker-compose exec jina-mcp-server sh
+
+# Test API key
+docker-compose exec jina-mcp-server node -e "console.log(process.env.JINA_API_KEY)"
+```
+
+#### Document indexing issues
+- Verify file paths are correct
+- Check if separator exists in file content
+- Ensure database permissions
+- Review chunk size and overlap settings
+
+### Best Practices
+
+1. **Security**
+   - Never commit API keys to version control
+   - Use MCP client's secure environment variable configuration
+   - For production Docker, use Docker secrets
+
+2. **File Organization**
+   - Use descriptive library names
+   - Version your documentation appropriately
+   - Organize files by logical groupings
+
+3. **Performance**
+   - Use separators for large multi-document files
+   - Batch process multiple URLs rather than individual requests
+   - Monitor database size for large indexing operations
+
+## 📊 Quick Reference
+
+| Use Case | Tool | Configuration |
+|----------|------|---------------|
+| Single webpage | `jina_reader` | URL + format options |
+| Web search | `jina_search` | Query + result count |
+| Fact checking | `jina_fact_check` | Statement to verify |
+| Batch URLs | `jina_reader_list` | Input file + output file |
+| Index file | `index_file_to_db` | File path + library |
+| List docs | `list_indexed_docs` | Optional library filter |
+| Search docs | `search_indexed_docs` | Query + optional filters |
+
+## 🔮 Future Enhancements
+
+The system is designed to easily add:
+- **Vector embeddings** (TxtAI integration)
+- **Semantic search** (combining FTS + vector similarity)  
+- **More file formats** (PDF, DOCX, etc.)
+- **Batch file processing** (index entire directories)
+- **Advanced analytics** (usage tracking, performance metrics)
+
+## 📄 License
 
 MIT
 
-## Links
+## 🔗 Links
 
-- GitHub: [https://github.com/PsychArch/jina-mcp-tools](https://github.com/PsychArch/jina-mcp-tools)
-- Issues: [https://github.com/PsychArch/jina-mcp-tools/issues](https://github.com/PsychArch/jina-mcp-tools/issues)
+- Original Project: [https://github.com/PsychArch/jina-mcp-tools](https://github.com/PsychArch/jina-mcp-tools)
+- Jina AI: [https://jina.ai](https://jina.ai)
+- Issues: Report bugs and feature requests in the issues section
+
+---
+
+This comprehensive documentation covers all aspects of the Jina AI MCP Tools with enhanced document indexing capabilities. The system provides a seamless workflow from web content extraction to intelligent document search, making it a powerful tool for research, documentation management, and content analysis.
