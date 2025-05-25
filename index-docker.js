@@ -141,8 +141,8 @@ server.tool(
       .describe("Include images in the extracted content"),
     delimiter: z.string()
       .optional()
-      .default("\n---\n")
-      .describe("Delimiter to separate results from different URLs")
+      .default("###SEPARATOR###")
+      .describe("Delimiter to separate results from different URLs (hardcoded for database indexing compatibility)")
   },
   async ({ inputFile, outputFile, format, withLinks, withImages, delimiter }) => {
     try {

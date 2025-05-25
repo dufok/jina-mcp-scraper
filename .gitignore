@@ -17,6 +17,7 @@ yarn-error.log
 .vscode/
 .cursor/
 data/*
+links_for_cr_data/*
 *.swp
 *.swo
 *~
