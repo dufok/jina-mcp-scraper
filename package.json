@@ -1,7 +1,7 @@
 {
-  "name": "jina-mcp-tools",
-  "version": "1.0.3",
-  "description": "Jina AI Model Context Protocol (MCP) server that integrates with Jina AI APIs for web reading, search, and fact-checking",
+  "name": "my-jina-mcp-tools",
+  "version": "1.0.0",
+  "description": "Custom fork of Jina AI Model Context Protocol (MCP) server that integrates with Jina AI APIs for web reading, search, fact-checking, and batch processing",
   "main": "index.js",
   "type": "module",
   "bin": {
@@ -9,6 +9,8 @@
   },
   "scripts": {
     "start": "node index.js",
+    "start:docker": "node index-docker.js",
+    "start:http": "MCP_MODE=http node index-docker.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
@@ -29,13 +31,13 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/PsychArch/jina-mcp-tools.git"
+    "url": "git+https://github.com/YOUR_USERNAME/YOUR_REPO_NAME.git"
   },
-  "homepage": "https://github.com/PsychArch/jina-mcp-tools#readme",
+  "homepage": "https://github.com/YOUR_USERNAME/YOUR_REPO_NAME#readme",
   "bugs": {
-    "url": "https://github.com/PsychArch/jina-mcp-tools/issues"
+    "url": "https://github.com/YOUR_USERNAME/YOUR_REPO_NAME/issues"
   },
-  "author": "PsychArch (https://github.com/PsychArch)",
+  "author": "YOUR_NAME (https://github.com/YOUR_USERNAME)",
   "license": "MIT",
   "engines": {
     "node": ">=16.0.0"
