@@ -46,7 +46,7 @@ async function initializeIndexingServices() {
   try {
     console.log("🚀 Initializing document indexing services...");
     
-    const databaseManager = new DatabaseManager('./data/jina-docs.db');
+    const databaseManager = new DatabaseManager('/workspace/data/jina-docs.db');
     await databaseManager.initialize();
     
     const embeddingsService = new MockEmbeddingsService();
