@@ -96,6 +96,26 @@ class DatabaseManager {
   }
 
   /**
+   * Insert embeddings for chunks
+   */
+  insertEmbeddings(chunkEmbeddings) {
+    const insertEmbedding = this.db.prepare(`
+      INSERT OR REPLACE INTO embeddings (chunk_id, embedding)
+      VALUES (?, ?)
+    `);
+
+    const insertMany = this.db.transaction((embeddings) => {
+      for (const { chunkId, embedding } of embeddings) {
+        // Convert embedding array to JSON string for storage
+        const embeddingJson = JSON.stringify(embedding);
+        insertEmbedding.run(chunkId, embeddingJson);
+      }
+    });
+
+    insertMany(chunkEmbeddings);
+  }
+
+  /**
    * Search chunks using full-text search
    */
   searchChunks(query, limit = 10) {

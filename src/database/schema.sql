@@ -31,3 +31,13 @@ CREATE VIRTUAL TABLE IF NOT EXISTS chunks_fts USING fts5(
 -- Simple indexes
 CREATE INDEX IF NOT EXISTS idx_documents_library ON documents(library, version);
 CREATE INDEX IF NOT EXISTS idx_chunks_document ON chunks(document_id);
+
+-- Embeddings table for storing vector embeddings
+CREATE TABLE IF NOT EXISTS embeddings (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    chunk_id INTEGER NOT NULL,
+    embedding TEXT NOT NULL, -- JSON array stored as text
+    FOREIGN KEY (chunk_id) REFERENCES chunks(id) ON DELETE CASCADE
+);
+
+CREATE INDEX IF NOT EXISTS idx_embeddings_chunk ON embeddings(chunk_id);

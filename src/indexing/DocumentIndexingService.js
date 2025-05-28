@@ -81,17 +81,21 @@ class DocumentIndexingService {
         // Store document and chunks in database
         const { documentId, chunkIds } = this.db.insertDocument(doc, chunks);
 
-        // Generate embeddings for chunks
-        const chunkTexts = chunks.map(chunk => chunk.content);
-        const embeddings = await this.embeddings.generateEmbeddings(chunkTexts);
+        // Generate embeddings for chunks (optional - skip if embeddings table doesn't exist)
+        try {
+          const chunkTexts = chunks.map(chunk => chunk.content);
+          const embeddings = await this.embeddings.generateEmbeddings(chunkTexts);
 
-        // Store embeddings
-        const chunkEmbeddings = chunkIds.map((chunkId, index) => ({
-          chunkId,
-          embedding: embeddings[index]
-        }));
+          // Store embeddings
+          const chunkEmbeddings = chunkIds.map((chunkId, index) => ({
+            chunkId,
+            embedding: embeddings[index]
+          }));
 
-        this.db.insertEmbeddings(chunkEmbeddings);
+          this.db.insertEmbeddings(chunkEmbeddings);
+        } catch (error) {
+          console.log('⚠️  Embeddings skipped (table may not exist):', error.message);
+        }
 
         totalChunks += chunks.length;
         results.push({
@@ -136,7 +140,7 @@ class DocumentIndexingService {
       let results = [];
 
       // Full-text search
-      const ftsResults = this.db.searchFullText(query, limit * 2);
+      const ftsResults = this.db.searchChunks(query, limit * 2);
       
       if (useSemanticSearch && this.embeddings) {
         // Generate embedding for query

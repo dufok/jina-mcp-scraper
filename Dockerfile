@@ -11,7 +11,7 @@ COPY package.json package-lock.json* ./
 RUN npm install --omit=dev
 
 # Copy only essential application files
-COPY index.js index-docker.js ./
+COPY index-docker.js ./
 COPY src/ ./src/
 
 # Create a non-root user for security

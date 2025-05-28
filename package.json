@@ -2,13 +2,13 @@
   "name": "my-jina-mcp-tools",
   "version": "1.0.0",
   "description": "Custom fork of Jina AI Model Context Protocol (MCP) server that integrates with Jina AI APIs for web reading, search, fact-checking, and batch processing",
-  "main": "index.js",
+  "main": "index-docker.js",
   "type": "module",
   "bin": {
-    "jina-mcp-tools": "./index.js"
+    "jina-mcp-tools": "./index-docker.js"
   },
   "scripts": {
-    "start": "node index.js",
+    "start": "node index-docker.js",
     "start:docker": "node index-docker.js",
     "start:http": "MCP_MODE=http node index-docker.js",
     "test": "echo \"Error: no test specified\" && exit 1"
