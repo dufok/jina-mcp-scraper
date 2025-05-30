@@ -56,3 +56,16 @@ jspm_packages/
 
 # Yarn Integrity file
 .yarn-integrity
+
+# Data directories (mounted as volumes)
+data/
+links_for_cr_data/
+jina_data/
+
+# Python scripts (not needed in container)
+check_urls.py
+requirements.txt
+
+# Git
+.git/
+.gitignore

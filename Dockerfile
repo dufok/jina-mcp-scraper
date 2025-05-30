@@ -19,7 +19,7 @@ RUN addgroup -g 1001 -S nodejs
 RUN adduser -S nodejs -u 1001
 
 # Create workspace directories that will be mounted from host
-RUN mkdir -p /workspace/data /workspace/links_for_cr_data
+RUN mkdir -p /workspace/jina_data
 RUN chown -R nodejs:nodejs /app /workspace
 USER nodejs
 

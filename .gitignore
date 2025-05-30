@@ -18,6 +18,7 @@ yarn-error.log
 .cursor/
 data/*
 links_for_cr_data/*
+jina_data/*
 *.swp
 *.swo
 *~

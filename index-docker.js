@@ -46,7 +46,7 @@ async function initializeIndexingServices() {
   try {
     console.log("🚀 Initializing document indexing services...");
     
-    const databaseManager = new DatabaseManager('/workspace/data/jina-docs.db');
+    const databaseManager = new DatabaseManager('/workspace/jina_data/jina-docs.db');
     await databaseManager.initialize();
     
     const embeddingsService = new MockEmbeddingsService();
@@ -393,6 +393,190 @@ server.tool(
         content: [{
           type: "text",
           text: `Error fact-checking statement: ${error.message}`
+        }],
+        isError: true
+      };
+    }
+  }
+);
+
+// DOCUMENTATION DISCOVERY TOOL
+server.tool(
+  "discover_documentation_pages",
+  "Automatically discover and list all documentation pages under a specific URL path using web crawling",
+  {
+    baseUrl: z.string().url().describe("Base URL to start discovery from (e.g., https://docs.solidjs.com/solid-start/)"),
+    maxDepth: z.number()
+      .optional()
+      .default(3)
+      .describe("Maximum depth to crawl (default: 3)"),
+    delay: z.number()
+      .optional()
+      .default(0.5)
+      .describe("Delay between requests in seconds (default: 0.5)"),
+    outputFile: z.string()
+      .optional()
+      .describe("Optional output file path to save discovered URLs")
+  },
+  async ({ baseUrl, maxDepth = 3, delay = 0.5, outputFile }) => {
+    try {
+      console.log(`🔍 Starting documentation discovery for: ${baseUrl}`);
+      
+      const visited = new Set();
+      const foundUrls = new Set();
+      const queue = [];
+      
+      // Helper function to check if URL is valid for discovery
+      const isValidUrl = (url) => {
+        try {
+          const parsed = new URL(url);
+          const baseParsed = new URL(baseUrl);
+          
+          // Must be from the same domain
+          if (parsed.hostname !== baseParsed.hostname) return false;
+          
+          // Must start with our base path
+          if (!url.startsWith(baseUrl.replace(/\/$/, ''))) return false;
+          
+          // Skip common non-documentation URLs
+          const skipPatterns = [
+            '#', 'javascript:', 'mailto:', 'tel:',
+            '.pdf', '.zip', '.tar.gz', '.json',
+            '/api/', '/search', '?', '/edit'
+          ];
+          
+          return !skipPatterns.some(pattern => url.includes(pattern));
+        } catch {
+          return false;
+        }
+      };
+      
+      // Helper function to extract links from a page
+      const getPageLinks = async (url) => {
+        try {
+          console.log(`  📄 Scanning: ${url}`);
+          
+          const response = await fetch(url, {
+            headers: createHeaders({
+              'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+            }),
+            timeout: 10000
+          });
+          
+          if (!response.ok) {
+            console.log(`  ⚠️  Failed to fetch ${url}: ${response.status}`);
+            return [];
+          }
+          
+          const html = await response.text();
+          const links = [];
+          
+          // Simple regex to extract href attributes (avoiding dependencies)
+          const hrefRegex = /href\s*=\s*["']([^"']+)["']/gi;
+          let match;
+          
+          while ((match = hrefRegex.exec(html)) !== null) {
+            try {
+              const href = match[1];
+              const fullUrl = new URL(href, url).href;
+              
+              if (isValidUrl(fullUrl)) {
+                links.push(fullUrl);
+              }
+            } catch {
+              // Skip invalid URLs
+            }
+          }
+          
+          return [...new Set(links)]; // Remove duplicates
+        } catch (error) {
+          console.log(`  ❌ Error scanning ${url}: ${error.message}`);
+          return [];
+        }
+      };
+      
+      // BFS crawling
+      queue.push({ url: baseUrl, depth: 0 });
+      visited.add(baseUrl);
+      
+      while (queue.length > 0) {
+        const { url: currentUrl, depth } = queue.shift();
+        
+        if (depth > maxDepth) continue;
+        
+        foundUrls.add(currentUrl);
+        
+        const links = await getPageLinks(currentUrl);
+        
+        for (const link of links) {
+          if (!visited.has(link)) {
+            visited.add(link);
+            queue.push({ url: link, depth: depth + 1 });
+          }
+        }
+        
+        // Respectful delay
+        if (delay > 0) {
+          await new Promise(resolve => setTimeout(resolve, delay * 1000));
+        }
+      }
+      
+      const sortedUrls = Array.from(foundUrls).sort();
+      
+      // Save to file if requested
+      if (outputFile) {
+        try {
+          const outputPath = path.resolve('/workspace', outputFile);
+          const outputDir = path.dirname(outputPath);
+          
+          // Ensure directory exists
+          if (!fs.existsSync(outputDir)) {
+            fs.mkdirSync(outputDir, { recursive: true });
+          }
+          
+          fs.writeFileSync(outputPath, sortedUrls.join('\n') + '\n');
+          console.log(`💾 Saved ${sortedUrls.length} URLs to: ${outputPath}`);
+        } catch (fileError) {
+          console.error(`⚠️  Could not save to file: ${fileError.message}`);
+        }
+      }
+      
+      console.log(`✅ Discovery complete! Found ${sortedUrls.length} URLs`);
+      
+      return {
+        content: [{
+          type: "text",
+          text: `🔍 **Documentation Discovery Results**
+
+**Base URL**: ${baseUrl}
+**Total URLs Found**: ${sortedUrls.length}
+**Pages Scanned**: ${visited.size}
+**Max Depth**: ${maxDepth}
+
+**📋 Discovered URLs:**
+
+${sortedUrls.join('\n')}
+
+${outputFile ? `\n💾 **Saved to file**: ${outputFile}` : ''}
+
+**💡 Next Steps:**
+- Copy these URLs to a file for batch processing
+- Use \`jina_reader_list\` to scrape all pages at once
+- Use \`index_file_to_db\` to index the scraped content
+
+**Example usage:**
+\`\`\`
+jina_reader_list --inputFile urls.txt --outputFile docs.md
+index_file_to_db --filePath docs.md --library "${baseUrl.split('/').filter(Boolean).slice(-1)[0]}"
+\`\`\``
+        }]
+      };
+      
+    } catch (error) {
+      return {
+        content: [{
+          type: "text",
+          text: `❌ Error discovering documentation: ${error.message}`
         }],
         isError: true
       };

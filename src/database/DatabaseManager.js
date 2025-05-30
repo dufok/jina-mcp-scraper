@@ -24,11 +24,18 @@ class DatabaseManager {
       // Ensure data directory exists
       const dataDir = path.dirname(this.dbPath);
       if (!fs.existsSync(dataDir)) {
-        fs.mkdirSync(dataDir, { recursive: true });
+        fs.mkdirSync(dataDir, { recursive: true, mode: 0o777 });
       }
 
       // Create database connection
       this.db = new Database(this.dbPath);
+      
+      // Set database file permissions to be writable
+      try {
+        fs.chmodSync(this.dbPath, 0o666);
+      } catch (permError) {
+        console.warn('⚠️  Could not set database permissions:', permError.message);
+      }
       
       // Load and execute schema
       const schemaPath = path.join(__dirname, 'schema.sql');

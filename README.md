@@ -45,13 +45,20 @@ docker build -t mcp/jinatool .
 {
   "servers": {
     "jina-mcp-tools": {
-      "command": "docker",
-      "args": ["run", "-i", "--rm", "mcp/jinatool"],
-      "env": {
-        "JINA_API_KEY": "your_jina_api_key_here"
-      }
+        "command": "docker",
+        "args": [
+            "run",
+            "-i",
+            "--rm",
+            "-v",
+            "/Users/dufok/Desktop/JinaMCPTool/data:/workspace/data",
+            "-v",
+            "/Users/dufok/Desktop/JinaMCPTool/links_for_cr_data:/workspace/links_for_cr_data",
+            "-e",
+            "JINA_API_KEY=API_KEY",
+            "mcp/jinatool",
+        ],
     }
-  }
 }
 ```
 
@@ -179,6 +186,35 @@ Process multiple URLs from a file with automatic separator handling:
 }
 ```
 
+**Important Notes about Searching:**
+
+- **`library` parameter is OPTIONAL** - If not specified, searches ALL indexed libraries
+- **Always searches LOCAL content** - Never returns web links, only your indexed documents
+- **URLs in results are metadata** - From original scraping, but content searched is local
+
+```json
+// Search specific library
+{
+  "name": "search_indexed_docs",
+  "arguments": {
+    "query": "API routes",
+    "library": "solidjs-complete"
+  }
+}
+
+// Search ALL libraries (library parameter omitted)
+{
+  "name": "search_indexed_docs", 
+  "arguments": {
+    "query": "API routes"
+  }
+}
+```
+
+**⚠️ Don't confuse with web search:**
+- `search_indexed_docs` = Search your LOCAL database
+- `jina_search` = Search the web
+
 ### Seamless Workflow
 
 1. **Scrape Multiple URLs**: Use `jina_reader_list` to scrape URLs from file
@@ -227,52 +263,25 @@ Process multiple URLs from a file with automatic separator handling:
 #### Option A: Docker with MCP Client Environment
 ```json
 {
-  "mcpServers": {
-    "jina-mcp-tools": {
-      "command": "docker",
-      "args": [
-        "run", "-i", "--rm",
-        "jina-mcp-tools"
-      ],
-      "env": {
-        "JINA_API_KEY": "your_actual_jina_api_key_here"
-      }
+    "servers": {
+        "jina-mcp-tools": {
+            "command": "docker",
+            "args": [
+                "run",
+                "-i",
+                "--rm",
+                "-v",
+                "/Users/dufok/Desktop/JinaMCPTool/data:/workspace/data",
+                "-v",
+                "/Users/dufok/Desktop/JinaMCPTool/links_for_cr_data:/workspace/links_for_cr_data",
+                "-e",
+                "JINA_API_KEY=",
+                "mcp/jinatool",
+            ],
+        }
     }
-  }
 }
-```
 
-#### Option B: Docker Compose (uses .env file)
-Only when using Docker Compose for standalone deployment:
-
-1. Create `.env` file:
-```bash
-JINA_API_KEY=your_actual_jina_api_key_here
-NODE_ENV=production
-```
-
-2. Run with Docker Compose:
-```bash
-docker-compose up -d
-```
-
-## 🐳 Docker Setup
-
-### Quick Docker Start
-
-```bash
-# Set up environment variables
-cp .env.example .env
-# Edit .env with your JINA_API_KEY
-
-# Build and start
-docker-compose up --build -d
-
-# Check status
-docker-compose ps
-
-# View logs
-docker-compose logs -f jina-mcp-server
 ```
 
 ### Testing Docker Deployment
